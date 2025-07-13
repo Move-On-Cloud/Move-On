@@ -1,83 +1,198 @@
+from pathlib import Path
+import zipfile
 
-body {
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f0f4f8;
-    color: #333;
+# Define file structure
+base_dir = Path("/mnt/data/moveon-website")
+assets_dir = base_dir / "assets"
+base_dir.mkdir(parents=True, exist_ok=True)
+assets_dir.mkdir(parents=True, exist_ok=True)
+
+# File contents
+index_html = """<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Move On – Löydä liikkumisen ilo</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Move On</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Etusivu</a></li>
+        <li><a href="palvelut.html">Palvelut</a></li>
+        <li><a href="#">Yrityksille</a></li>
+        <li><a href="#">Ota yhteyttä</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="sidebar">
+    <h4>Mainospaikka</h4>
+    <div class="ad-banner">Mainosta tässä!</div>
+    <div class="ad-banner">Treenivaatteet -30%</div>
+  </div>
+
+  <section class="hero">
+    <h2>Liiku. Koe. Yhdisty.</h2>
+    <p>Yksi sovellus – kaikki liikuntapalvelut. Löydä elämyksiä ympäri Pohjoismaita.</p>
+    <a href="palvelut.html" class="cta-button">Tutustu palveluihin</a>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Move On. Kaikki oikeudet pidätetään.</p>
+  </footer>
+</body>
+</html>
+"""
+
+palvelut_html = """<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Move On – Palvelut</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Palvelut</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Etusivu</a></li>
+        <li><a href="palvelut.html">Palvelut</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="sidebar">
+    <h4>Mainospaikka</h4>
+    <div class="ad-banner">Mainosta yritystäsi täällä!</div>
+    <div class="ad-banner">Liity nyt ja säästä 20%!</div>
+  </div>
+
+  <main class="services-list">
+    <h2>Palvelut</h2>
+
+    <div class="service-card"><h3>SkyZone Trampoliinipuisto</h3><p>18 € / hlö</p></div>
+    <div class="service-card"><h3>AirTime Tampere</h3><p>16 € / hlö</p></div>
+    <div class="service-card"><h3>Nordic Kayak Tours</h3><p>45 € / 2h</p></div>
+    <div class="service-card"><h3>Saimaa Adventures Kajakki</h3><p>49 € / 3h</p></div>
+    <div class="service-card"><h3>City Climb Helsinki</h3><p>22 € / hlö</p></div>
+    <div class="service-card"><h3>Adventure Park Turku</h3><p>25 € / hlö</p></div>
+    <div class="service-card"><h3>PT Elisa</h3><p>75 € / kk</p></div>
+    <div class="service-card"><h3>Trainer Max</h3><p>69 € / kk</p></div>
+
+    <h3>Kuntosalit</h3>
+    <div class="service-card"><h3>Elixia</h3><p>59 € / kk</p></div>
+    <div class="service-card"><h3>Fitness24Seven</h3><p>29 € / kk</p></div>
+    <div class="service-card"><h3>Fressi</h3><p>49 € / kk</p></div>
+    <div class="service-card"><h3>LadyLine</h3><p>45 € / kk</p></div>
+    <div class="service-card"><h3>Wasa Sports Club</h3><p>55 € / kk</p></div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Move On. Kaikki oikeudet pidätetään.</p>
+  </footer>
+</body>
+</html>
+"""
+
+styles_css = """body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f4f8;
+  color: #333;
 }
-
 header {
-    background-color: #1a73e8;
-    color: white;
-    padding: 20px;
-    text-align: center;
+  background-color: #1a73e8;
+  color: white;
+  padding: 20px;
+  text-align: center;
 }
-
 header h1 {
-    margin: 0;
+  margin: 0;
 }
-
 nav ul {
-    list-style: none;
-    padding: 0;
-    margin-top: 10px;
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
 }
-
 nav ul li {
-    display: inline;
-    margin: 0 15px;
+  display: inline;
+  margin: 0 15px;
 }
-
 nav ul li a {
-    color: white;
-    text-decoration: none;
+  color: white;
+  text-decoration: none;
 }
-
 .hero {
-    background-color: #e8f0fe;
-    text-align: center;
-    padding: 50px 20px;
+  background-color: #e8f0fe;
+  text-align: center;
+  padding: 50px 20px;
 }
-
 .hero h2 {
-    font-size: 2em;
-    margin-bottom: 10px;
+  font-size: 2em;
+  margin-bottom: 10px;
 }
-
 .cta-button {
-    background-color: #1a73e8;
-    color: white;
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 5px;
-    display: inline-block;
-    margin-top: 15px;
+  background-color: #1a73e8;
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  display: inline-block;
+  margin-top: 15px;
 }
-
-.services {
-    padding: 40px 20px;
-    background-color: white;
+.services-list {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
 }
-
-.services h3 {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
 .service-card {
-    background-color: #f9fafb;
-    border: 1px solid #dbe2ea;
-    padding: 20px;
-    margin: 15px auto;
-    max-width: 500px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  background-color: #fff;
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
-
 footer {
-    background-color: #1a73e8;
-    color: white;
-    text-align: center;
-    padding: 10px 0;
+  background-color: #1a73e8;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
 }
+.sidebar {
+  position: absolute;
+  right: 0;
+  top: 100px;
+  width: 200px;
+  padding: 10px;
+  background-color: #f7f9fb;
+}
+.ad-banner {
+  background-color: #ffcc00;
+  padding: 10px;
+  margin: 10px 0;
+  text-align: center;
+  border-radius: 6px;
+  font-weight: bold;
+}
+"""
+
+# Write files
+(base_dir / "index.html").write_text(index_html, encoding="utf-8")
+(base_dir / "palvelut.html").write_text(palvelut_html, encoding="utf-8")
+(assets_dir / "styles.css").write_text(styles_css, encoding="utf-8")
+
+# Create ZIP
+zip_path = "/mnt/data/moveon-website.zip"
+with zipfile.ZipFile(zip_path, "w") as zipf:
+    for path in base_dir.rglob("*"):
+        zipf.write(path, path.relative_to(base_dir.parent))
+
+zip_path
